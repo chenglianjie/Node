@@ -1,0 +1,26 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "学习node",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenglianjie/Node-.git"
+  },
+  "keywords": [
+    "仅供学习"
+  ],
+  "author": "程连杰",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chenglianjie/Node-/issues"
+  },
+  "homepage": "https://github.com/chenglianjie/Node-#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4"
+  }
+}
