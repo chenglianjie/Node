@@ -21,8 +21,13 @@ app.all('*',function (req, res, next) {
     }
   });
   // ------------------------------跨域问题 end-----------------
-app.use(bodyParser.json())  // 使用body-
+app.use(bodyParser.json())  // 使用body-parser
 router.init(app) // 使用路由
+// 错误处理 
+app.use(function(err, req, res, next) {
+       res.send(err)
+})
+// 监听的端口
 app.listen(port,()=>{
     console.log(`this app is listen ${port}`)
 })
