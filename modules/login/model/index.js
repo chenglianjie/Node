@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const myText = mongoose.Schema({
-  username: { type: String }, // 账号
+  username: { type: String,unique:true}, // 账号
   password: { type: String }, // 密码
 });
-var Text = mongoose.model("Text",myText)
-module.exports = Text
+var User = mongoose.model("User",myText,'user')
+module.exports = User
