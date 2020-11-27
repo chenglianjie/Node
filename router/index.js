@@ -2,12 +2,11 @@ const fs = require('fs') //引入系统自带的文件模块
 const jwt = require('../middlewares/checkjwt');
 exports.init = function(app){
   // jwt鉴权
-  // app.use(jwt) 暂时先屏蔽掉jwt 
-  // app.use((req,res,next)=>{
-  //   console.log('这个token被允许了')
-  //   next();
-  // })
-  // 11-25 占时先屏蔽掉 jwt鉴权
+  app.use(jwt) 
+  app.use((req,res,next)=>{
+    console.log('这个token被允许了')
+    next();
+  })
   // 让前端测试权限是否通过
   app.use('/kiwisec/test',function(req,res,next){
     res.send('token能正常使用')

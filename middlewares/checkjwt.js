@@ -30,10 +30,10 @@
 // 验证jwt 用的是express-jwt插件
 const expressjwt = require('express-jwt');
 const key = 'cljjwt';
-// unless是不对哪个路由生效， 登录的时候不需要验证token。
+// unless是不对哪个路由生效， 登录，注册，修改密码等不需要验证token。
 const jwtistrue = expressjwt({
   secret:key,
   algorithms:['HS256'],
   credentialsRequired:true // false时 不校验
-}).unless({path:['/kiwisec/login','/kiwisec/register']})
+}).unless({path:['/kiwisec/login','/kiwisec/register','/kiwisec/updatePassword']})
 module.exports = jwtistrue;

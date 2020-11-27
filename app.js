@@ -7,7 +7,7 @@ var port = 3030;  //监听端口
 // 连接数据库
 connectDB();
 //设置跨域访问 简单直接 暴力 也可以用cors中间件
-app.all("*",function (req, res, next) {
+app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin',req.headers.origin);
     res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
@@ -22,8 +22,9 @@ app.all("*",function (req, res, next) {
   });
   // ------------------------------跨域问题 end-----------------
 app.use(bodyParser.json())  // 使用body-parser
-// app.use(bodyParser.urlencoded({ extended: false }));
-router.init(app)           // 使用路由
+app.use(bodyParser.urlencoded({ extended: false }));
+// 路由模块
+router.init(app)           
 // 错误处理 
 app.use(function(err, req, res, next) {
   res.send(err)
