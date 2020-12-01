@@ -15,7 +15,8 @@ var connect = function dbconnect(){
     console.log("mongoDB连接失败,将自动重连5次")
     if(connectMaxNum<=5){
       setTimeout(function(){
-        dbconnect('mongodb://localhost:27017/kiwisec')
+        // dbconnect('mongodb://localhost:27017/kiwisec') 本地数据库;
+        dbconnect('mongodb://192.168.3.88:30000/kiwisec') //公司3.88数据库;
         console.log(`第${connectMaxNum}次重连`)
       },10000)
     }else{

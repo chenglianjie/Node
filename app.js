@@ -5,7 +5,7 @@ var bodyParser=require("body-parser");  // 引入bodyparser中间件
 var app = express()
 var port = 3030;  //监听端口
 // 连接数据库
-connectDB();
+// connectDB();
 //设置跨域访问 简单直接 暴力 也可以用cors中间件
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin',req.headers.origin);
