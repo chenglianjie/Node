@@ -1,6 +1,17 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: Jimmy
+ * @Date: 2020-07-20 11:29:51
+ * @LastEditors: Jimmy
+ * @LastEditTime: 2020-12-03 14:13:55
+ */
 
 const  User =  require("../model/index");
-const jwt = require("jsonwebtoken");
+const moment = require("moment");
+const uuid = require('uuid');
+const session = require("express-session");
+const jwt = require('../../../middlewares/checkjwt');
 
 // 注册
 exports.register = async function (req, res) {
@@ -18,7 +29,17 @@ exports.register = async function (req, res) {
       res.status(200).send({code:0, msg:"用户名已存在！"});
       return
     }
-    let obj = {username,password}
+    // 用户的类型 手机号注册还是说邮箱注册
+    let registerType = 'tel';
+    if(/@/.test(username)){
+      registerType = 'email';
+    }
+    let userId = uuid.v1();  // 生成唯一的userId
+    // 注册的时间
+    let createTime = moment().format("YYYY-MM-DD  HH:mm:ss");
+    // 更新密码的时间
+    let updateTime = ''
+    let obj = {username,password,userId,createTime,updateTime,registerType}
     User.create(obj,function(error,doc){
       if(error){
         console.log(error);
@@ -35,26 +56,34 @@ exports.register = async function (req, res) {
 
 }
 // 登录
-exports.login = function(req,res){
+exports.login = async function(req,res){
   try {
     const {username,password} = req.body;
     console.log("前端过来的参数",username,password)
-    User.find({username},function(err,docs){
-      if(err){
-        console.log(err)
-        res.status(400).send({code:0,msg:'查询错误'})
-        return;
-      }
-      console.log("docs",docs)
-      if(docs[0].password !== password){
+    const data = await User.findOne({username});
+    console.log("返回的data",data)
+    if(data){
+      if(data.password !== password){
         res.status(200).send({code:0,msg:"密码错误",token});
         return;
       }
-      let playload= {username,password};
-      const secretkey = 'cljjwt';
-      let token = jwt.sign(playload,secretkey,{expiresIn:'7day'});
+      let obj ={userId:data.userId,username:data.username}
+      let token = await jwt.setToken(obj);
+      req.session.user = obj;
+      console.log("token",token)
+      console.log("session",req.session.user)
       res.status(200).send({code:1,msg:'登录成功',data:token});
-    })
+    }else{
+      res.status(400).send({msg:"用户名不存在"})
+    }
+  
+      // let playload= {username,userId:docs[0].userId};
+      // req.session.user = playload;
+     
+      // const secretkey = 'cljjwt';
+      // let token = jwt.sign(playload,secretkey,{expiresIn:'7day'});
+      // res.status(200).send({code:1,msg:'登录成功',data:token});
+    // })
   } catch (error) {
     console.log("我是错误",error)
   }

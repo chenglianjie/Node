@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: Jimmy
+ * @Date: 2020-07-20 11:33:30
+ * @LastEditors: Jimmy
+ * @LastEditTime: 2020-12-03 11:35:18
+ */
 const fs = require('fs') //引入系统自带的文件模块
 // const jwt = require('../middlewares/checkjwt');
 exports.init = function(app){
@@ -8,9 +16,9 @@ exports.init = function(app){
   //   next();
   // })
   // 让前端测试权限是否通过
-  app.use('/kiwisec/test',function(req,res,next){
-    res.send('token能正常使用')
-  })
+  // app.use('/kiwisec/test',function(req,res,next){
+  //   res.send('token能正常使用')
+  // })
   // module里面的路由模块
   var moduleArr = [
     'login',

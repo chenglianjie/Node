@@ -1,9 +1,16 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: Jimmy
+ * @Date: 2020-07-20 11:14:48
+ * @LastEditors: Jimmy
+ * @LastEditTime: 2020-12-03 10:53:40
+ */
 var mongoose = require('mongoose'); // 引入mongoose
 // 链接数据库方法
 var connectMaxNum = 0; //数据库重新连接的次数
 var connect = function dbconnect(){
-  mongoose.connect('mongodb://localhost:27017/kiwisec',{
-  // useMongoClient:true,
+  mongoose.connect('mongodb://192.168.3.88:30000/clj',{
   poolSize: 5, // MongoDB 保持的最大 socket 连接数。 poolSize 的默认值是 5。
   reconnectTries: 5, // 服务器尝试重新连接的次数
   keepAlive: 1, // 在TCP套接字上启动keepAlive之前要等待的毫秒数。
