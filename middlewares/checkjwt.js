@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-07-20 15:28:12
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-03 13:44:11
+ * @LastEditTime: 2020-12-04 18:33:43
  */
 
 // jwt主要有三部分组成
@@ -23,7 +23,7 @@ const signkey = 'jwt-clj';
 exports.setToken = function(obj){
   return new Promise((resolve,reject) => {
     // sign 参数一：加密的对象 参数二 加密的规则 参数三：一个对象 里面可以写过期时间等；
-    const token = jwt.sign(obj,signkey,{ expiresIn:'1h' })
+    const token = jwt.sign(obj,signkey,{ expiresIn:'2h' });
     if(token){
       resolve(token);
     }else{
@@ -32,13 +32,17 @@ exports.setToken = function(obj){
   })
 }
 exports.verifyToken = function(req,res,next){
-  let token = req.headers.authorization;
+  let Bearertoken = req.headers.authorization;
+  let token = Bearertoken.replace("Bearer","").trim();
+  // console.log("后端接收到的token",token);
   jwt.verify(token,signkey,function(err,decode){
     if(err){
-      console.log("token验证没有通过，请重新登录")
-      res.json({msg:'请重新登录'})
+      console.log("token验证没有通过，请重新登录");
+      res.status(401).send({msg:'非法请求'});
+      // res.json({msg:'请重新登录'})
     }else{
-      console.log("token验证通过")
+      console.log("token验证通过,解析内容为",decode);
+      req.session.user = decode;
       next();
     }
   })

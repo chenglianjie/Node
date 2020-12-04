@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-11-30 18:00:18
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-03 16:05:28
+ * @LastEditTime: 2020-12-04 17:47:52
  */
 
 const  AppEncrypt =  require("../model/index");
@@ -13,9 +13,40 @@ const OSS = require('ali-oss');
 
 // table 数据
 exports.list =async function(req,res){
-  const data = await AppEncrypt.find({}).sort({"updateTime":-1});
+  const {apkName='',state,startTime,endTime} = req.query;
+  console.log("接收前端的参数",req.query);
+  let filterObj = {};
+  if(startTime&&endTime){
+    filterObj.updateTime = {
+      $gte:new Date(`${startTime} 00:00:00`),
+      $lte:new Date(`${endTime} 23:59:59`),
+    }
+  }
+  if(apkName){
+    filterObj.apkName = {$regex:apkName};
+  }
+  if(state){
+    filterObj.state = state;
+  }
+  console.error("我是保存到session的user  list",req.session.user);
+  const data = await AppEncrypt.find(filterObj).sort({"updateTime":-1});
   res.send({code:'0000',data:data});
 }
+// 删除数据
+exports.del = async function (req,res){
+ const {md5=''} = req.query;
+//  console.log("md5",md5)
+ if(md5){
+   let result = await AppEncrypt.find({md5});
+   if(result){
+    await AppEncrypt.deleteOne({md5});
+    res.status(200).send({code:1,msg:'删除成功'})
+   }
+ }else{
+  res.status(200).send({code:0,msg:"请传入md5"})
+ }
+}
 exports.upload = async function(req,res){
+  console.error("我是保存到session的user  upload",req.session.user);
   upload.singleUpload(req,res);
 }

@@ -4,15 +4,17 @@
  * @Author: Jimmy
  * @Date: 2020-12-01 15:02:24
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-03 16:22:05
+ * @LastEditTime: 2020-12-04 17:25:41
  */
 const  multer = require("multer");
 const path=require('path');
 const fs = require("fs");
 const moment = require("moment");
 const mkdirp = require('mkdirp');
+const uuid = require('uuid');
 const getApkInfo = require("./getApkInfo");
 const AppEncrypt = require("../modules/apk_encrypt/model/index")
+const session = require("express-session");
 // 磁盘存储引擎 (DiskStorage)
 // 磁盘存储引擎可以让你控制文件的存储。
 let storage = multer.diskStorage({
@@ -99,13 +101,15 @@ exports.singleUpload = function(req,res){
       let apkInfo = await getApkInfo(aaptPath,apkPath,apkboxPath);
       console.log("apkInfo upload里面的",apkInfo);
       // apkInfo.userId = req.session.userId || '无';
-      let updateTime = moment().format("YYYY-MM-DD HH:mm:ss");
+      // let updateTime = moment().format("YYYY-MM-DD HH:mm:ss");
+      let updateTime = new Date();
       let apkSize = (req.file.size/1024/1024).toFixed(2) + "M";
       let version = "v" + apkInfo.version;
       let user= req.session.user;
-      // let u_id = user.userId
-      console.error("我是u_id啊啊啊",user)
-      let obj = {apkSize,updateTime,version,apkName:apkInfo.name,package:apkInfo.package};
+      let u_id = user.userId
+      let md5 = uuid.v1();  // 生成唯一的userId
+      console.error("我是保存到session的user 解析apk之后的",req.session.user);
+      let obj = {md5,u_id,apkSize,updateTime,version,apkName:apkInfo.name,package:apkInfo.package};
       const datas = await AppEncrypt.create(obj);
       console.log("保存信息的datas",datas);
       if(datas){

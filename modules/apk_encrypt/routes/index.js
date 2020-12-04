@@ -4,13 +4,15 @@
  * @Author: Jimmy
  * @Date: 2020-11-30 18:00:18
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-03 15:17:21
+ * @LastEditTime: 2020-12-04 17:19:55
  */
 const router = require('express').Router();
 const controller = require("../controller");
-const autoFilter = require('../../../middlewares/checkjwt').verifyToken
+const {verifyToken} = require('../../../middlewares/checkjwt')
+const {isSession} = require("../../../middlewares/isSession")
 
-router.get("/encryptAndroid/list" , controller.API.list);
+router.get("/encryptAndroid/list" , verifyToken , isSession , controller.API.list);
+router.get("/encryptAndroid/delect" , verifyToken , isSession , controller.API.del);
 router.post("/encryptAndroid/upload",controller.API.upload);
 
 module.exports = router;
