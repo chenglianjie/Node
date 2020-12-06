@@ -10,7 +10,8 @@ var mongoose = require('mongoose'); // 引入mongoose
 // 链接数据库方法
 var connectMaxNum = 0; //数据库重新连接的次数
 var connect = function dbconnect(){
-  mongoose.connect('mongodb://192.168.3.88:30000/clj',{
+  mongoose.connect('mongodb://clj:kiwisec888@120.55.193.14:27017/kiwisec',{
+  // mongoose.connect('mongodb://admin:admin@120.55.193.14:27017/blog',{
   poolSize: 5, // MongoDB 保持的最大 socket 连接数。 poolSize 的默认值是 5。
   reconnectTries: 5, // 服务器尝试重新连接的次数
   keepAlive: 1, // 在TCP套接字上启动keepAlive之前要等待的毫秒数。
@@ -23,7 +24,8 @@ var connect = function dbconnect(){
     if(connectMaxNum<=5){
       setTimeout(function(){
         // dbconnect('mongodb://localhost:27017/kiwisec') 本地数据库;
-        dbconnect('mongodb://192.168.3.88:30000/kiwisec') //公司3.88数据库;
+        dbconnect('mongodb://admin:admin@120.55.193.14:27017/blog') //服务器上的数据库;
+        // dbconnect('mongodb://192.168.3.88:30000/kiwisec') //公司3.88数据库;
         console.log(`第${connectMaxNum}次重连`)
       },10000)
     }else{
