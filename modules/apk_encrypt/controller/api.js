@@ -4,12 +4,12 @@
  * @Author: Jimmy
  * @Date: 2020-11-30 18:00:18
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-04 17:47:52
+ * @LastEditTime: 2020-12-08 16:16:56
  */
 
 const  AppEncrypt =  require("../model/index");
-const upload = require("../../../middlewares/upload")
-const OSS = require('ali-oss');
+const upload = require("../../../middlewares/upload");
+const {ossDownload} = require("../../../middlewares/ossUpload");
 
 // table 数据
 exports.list =async function(req,res){
@@ -25,7 +25,7 @@ exports.list =async function(req,res){
   if(apkName){
     filterObj.apkName = {$regex:apkName};
   }
-  if(state){
+  if(state !== "all" && state){
     filterObj.state = state;
   }
   console.error("我是保存到session的user  list",req.session.user);
@@ -46,7 +46,19 @@ exports.del = async function (req,res){
   res.status(200).send({code:0,msg:"请传入md5"})
  }
 }
+// 上传apk
 exports.upload = async function(req,res){
-  console.error("我是保存到session的user  upload",req.session.user);
+  // console.error("我是保存到session的user  upload",req.session.user);
   upload.singleUpload(req,res);
 }
+// 下载apk  有点问题 占时先屏蔽掉
+// exports.download = async function(req,res){
+//   try {
+//     const {ossFile=""} = req.query
+//     console.log("前端传过来的ossFile",ossFile)
+//     const result = await ossDownload(ossFile);
+//     res.send({data:result,msg:'下载成功',code:1})
+//   } catch (error) {
+//     res.status(400).send({code:0,msg:'下载失败'});
+//   }
+// }

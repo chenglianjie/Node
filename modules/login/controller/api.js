@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-07-20 11:29:51
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-04 18:19:25
+ * @LastEditTime: 2020-12-07 10:02:21
  */
 
 const  User =  require("../model/index");
@@ -18,6 +18,10 @@ exports.register = async function (req, res) {
   try {
     // 获取用户名和密码
     const {username,password} = req.body;
+    if(!username && !password){
+      res.status(400).send({code:0,msg:'请传入用户名和密码'})
+      return;
+    }
     console.log("注册的参数",req.body);
     let data = await User.find({username});
     console.log("data",data);

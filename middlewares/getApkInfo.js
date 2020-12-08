@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-12-02 17:04:35
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-03 14:30:22
+ * @LastEditTime: 2020-12-08 14:28:07
  */
 /*
  * @Descripttion: 
@@ -16,19 +16,20 @@
  */
 const execSync = require("child_process").execSync;
 const path = require("path");
-
 // var ApkReader = require('adbkit-apkreader')
 // var fs = require('fs')
-
 module.exports = function(aaptPath,apkPath,apkboxPath){
   console.log("__dirname",__dirname)
-  // let aaptPath = path.join(__dirname,'../../aapt/win.aapt.exe');
-  // let apkPath = path.join(__dirname,'../../static/apk/youku.apk');
   let cmd = `${aaptPath} dump badging ${apkPath}`;
-  console.log("我是路径",aaptPath,apkPath);
-  result = execSync(cmd).toString();
+  try {
+    results = execSync(cmd)
+  } catch (error) {
+    // console.log("出错啦",error)
+    throw error;
+    return;
+  }
+  let result = results.toString();
   // result 是获取的结果
-  // console.log("apk包的全部解析信息",result)
   let arr = result.split('\n')
   let appInfo = {};
   let packageArr = [];
@@ -43,39 +44,7 @@ module.exports = function(aaptPath,apkPath,apkboxPath){
       appInfo.icon = labelArr[2] ? labelArr[2].replace(/\'/g, '') : '';
     }
   }
-  console.log("解析出来的apk信息",appInfo)
+  console.log("解析的apk信息",appInfo);
   return appInfo;
-  // ApkReader.open(apkPath)
-  //   .then(function(reader) {
-  //       reader.readContent(appInfo.icon).then(function(image) {
-  //           console.log(image)
-  //           fs.writeFile("image.png", image, function(err) {
-  //               if (err) {
-  //                   console.log(err)
-  //               } else {
-  //                   console.log('success')
-  //               }
-  //           });
-  //       })
-  //   })
-
-  // let icon = appInfo.icon;
-  // 解析出icon
-  // let cmdStr = 'unzip -o ' + apkPath + ' ' + icon;
-  // let img = execSync(cmdStr,{timeout:10000,shell:''})
-  // console.log("img",img);
-  // let cmd = `${absolutPath} dump badging C:\\Users\\123\\Desktop\\express-text\\aapt\\youku.apk`;
-  // result = execSync(cmd,{cwd:__dirname + '/aapt'}).toString();
-  // console.log("result",result)
-  // res.send(result)
-  // exec(cmd,function(err,data,dataerr){
-  //   if(err){
-  //     console.log("err",err)
-  //     console.log("datataerr",dataerr)
-  //   }else{
-  
-  //     res.send(appInfo);
-  //   }
-  // });
 };
 

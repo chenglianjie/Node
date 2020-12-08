@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-07-20 15:28:12
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-04 18:33:43
+ * @LastEditTime: 2020-12-08 18:19:43
  */
 
 // jwt主要有三部分组成
@@ -38,7 +38,7 @@ exports.verifyToken = function(req,res,next){
   jwt.verify(token,signkey,function(err,decode){
     if(err){
       console.log("token验证没有通过，请重新登录");
-      res.status(401).send({msg:'非法请求'});
+      res.status(401).send({msg:'token已过期，请重新登录'});
       // res.json({msg:'请重新登录'})
     }else{
       console.log("token验证通过,解析内容为",decode);

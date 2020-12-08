@@ -4,17 +4,20 @@
  * @Author: Jimmy
  * @Date: 2020-12-01 15:02:24
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-04 17:25:41
+ * @LastEditTime: 2020-12-08 15:05:56
  */
 const  multer = require("multer");
 const path=require('path');
 const fs = require("fs");
+const OSS = require('ali-oss')
 const moment = require("moment");
 const mkdirp = require('mkdirp');
 const uuid = require('uuid');
 const getApkInfo = require("./getApkInfo");
-const AppEncrypt = require("../modules/apk_encrypt/model/index")
+const AppEncrypt = require("../modules/apk_encrypt/model/index");
 const session = require("express-session");
+const {ossUpload} = require("../middlewares/ossUpload");
+const { Console } = require("console");
 // 磁盘存储引擎 (DiskStorage)
 // 磁盘存储引擎可以让你控制文件的存储。
 let storage = multer.diskStorage({
@@ -43,8 +46,10 @@ let storage = multer.diskStorage({
   //    }
   // path.extname 获取后缀
   // cb(null,Date.now() + "" + path.extname(file.originalname)); 
+  // 去除源文件的空格
+  let filename = file.originalname.replace(/\s*/g,"");
   // 时间戳直接加上原来的名字 
-    cb(null,Date.now() + "" + file.originalname); 
+    cb(null,Date.now() + "" + filename); 
   }
 })
 // 一个对象，指定一些数据大小的限制。 更多限制参考官方文档
@@ -76,7 +81,6 @@ let manyUpload = upload.array('file',10);
 // 封装的单个上传文件的例子 做了一个不能上传png图片的例子
 exports.singleUpload = function(req,res){
   singleUpload(req,res,async function(err){
-    // console.log('有没有我的参数',req.file,req.body)
     if(err instanceof multer.MulterError){
       console.log("文件上传出错了MulterError",err)
       res.send({code:0,err});
@@ -89,40 +93,41 @@ exports.singleUpload = function(req,res){
       res.send('文件上传出错了err,上传失败');
     } 
     else{
-      console.log("文件上传成功");
-      console.log("filenaem",req.file);
+      console.log("文件上传成功啦啦");
       let filename = req.file.filename
       let day = moment().format("YYYYMMDD");
+       // 执行aapt命令需要的路径
+       let apkPath = path.join(__dirname,`../static/apk/${day}/${filename}`);
+       let aaptPath = path.join(__dirname ,`../utils/win.aapt.exe`);
+       let apkboxPath = path.join(__dirname,`../static/apk/${day}`);
+       let  ossFile = '';
       // 解析出apk的信息
-      let apkPath = path.join(__dirname,`../static/apk/${day}/${filename}`);
-      let aaptPath = path.join(__dirname ,`../utils/win.aapt.exe`);
-      let apkboxPath = path.join(__dirname,`../static/apk/${day}`);
-      // console.log("apkPath",apkPath);
-      let apkInfo = await getApkInfo(aaptPath,apkPath,apkboxPath);
-      console.log("apkInfo upload里面的",apkInfo);
-      // apkInfo.userId = req.session.userId || '无';
-      // let updateTime = moment().format("YYYY-MM-DD HH:mm:ss");
+      try {
+        var apkInfo = await getApkInfo(aaptPath,apkPath,apkboxPath);
+      } catch (error) {
+        console.log(error);
+        res.status(400).send({msg:'apk解析失败'})
+      }
+      // 文件上传成功和解析成功之后 将apk上传到oss
+      try {
+        ossUpload(filename,apkPath);
+        ossFile = 'test/' + filename;
+      } catch (error) {
+        res.status(400).send({code:0,msg:'文件上传到oss失败'})
+      }
+      // 数据处理 存在数据库
       let updateTime = new Date();
       let apkSize = (req.file.size/1024/1024).toFixed(2) + "M";
-      let version = "v" + apkInfo.version;
+      let version = apkInfo.version;
       let user= req.session.user;
-      let u_id = user.userId
+      let u_id = user.userId || "";
       let md5 = uuid.v1();  // 生成唯一的userId
-      console.error("我是保存到session的user 解析apk之后的",req.session.user);
-      let obj = {md5,u_id,apkSize,updateTime,version,apkName:apkInfo.name,package:apkInfo.package};
+      let obj = {ossFile,md5,u_id,apkSize,updateTime,version,apkName:apkInfo.name,package:apkInfo.package};
       const datas = await AppEncrypt.create(obj);
-      console.log("保存信息的datas",datas);
+      // 数据处理 存在数据库 end
       if(datas){
         res.status(200).send({code:'0000',msg:'文件上传成功'})
       }
-      // return new Promise((resolve,reject)=>{
-      //   if(apkInfo){
-      //     resolve(apkInfo)
-      //   }else{
-      //     reject("upload里面的apkinfo出错了")
-      //   }
-      // })
-      // res.status(200).send({code:'0000',msg:'文件上传成功'})
     }
   })
 }
