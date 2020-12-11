@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-07-20 11:07:39
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-04 18:24:50
+ * @LastEditTime: 2020-12-11 15:59:03
  */
 var express = require('express');        // 引入express
 var router = require('./router/index.js') //引入路由
@@ -28,6 +28,8 @@ app.use(session({
 }));
 // 连接数据库
 connectDB();
+// 开放静态资源
+app.use(express.static('public'))
 //设置跨域访问 简单直接 暴力 也可以用cors中间件
 app.use(function (req, res, next) {
     // console.log("req.headers.origin",req.headers.origin);
@@ -47,7 +49,6 @@ app.use(function (req, res, next) {
   // ------------------------------跨域问题 end-----------------
 app.use(bodyParser.json())  // 使用body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
-
 // 路由模块
 router.init(app)           
 // 错误处理 

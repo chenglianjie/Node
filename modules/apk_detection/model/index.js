@@ -4,11 +4,10 @@
  * @Author: Jimmy
  * @Date: 2020-11-30 18:00:18
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-11 15:20:24
+ * @LastEditTime: 2020-12-11 15:17:57
  */
-const moment = require("moment")
 const mongoose = require("mongoose");
-const appEncrypt = mongoose.Schema({
+const appDetections = mongoose.Schema({
   version: { type: String}, 
   apkName: { type: String }, 
   package: { type: String }, 
@@ -18,7 +17,7 @@ const appEncrypt = mongoose.Schema({
   updateTime:{type:Date,},
   apkSize:{type:String},
   apkIcon:{type:String},
-  ossFile:{type:String},
+  ossFile:{type:String,default:"default"},
 });
-var AppEncrypt = mongoose.model("AppEncrypt",appEncrypt,'appEncrypt')
-module.exports = AppEncrypt
+var appDetection = mongoose.model("appDetection",appDetections,'appDetection')
+module.exports = appDetection

@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-07-20 11:33:30
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-03 11:35:18
+ * @LastEditTime: 2020-12-11 11:24:21
  */
 const fs = require('fs') //引入系统自带的文件模块
 // const jwt = require('../middlewares/checkjwt');
@@ -24,6 +24,7 @@ exports.init = function(app){
     'login',
     'student',
     "apk_encrypt",
+    "apk_detection",
   ]
   let tmpModule = null;
   let tmpRoute = null;

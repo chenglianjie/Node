@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-11-30 18:00:18
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-08 16:16:56
+ * @LastEditTime: 2020-12-11 15:22:54
  */
 
 const  AppEncrypt =  require("../model/index");
@@ -49,7 +49,8 @@ exports.del = async function (req,res){
 // 上传apk
 exports.upload = async function(req,res){
   // console.error("我是保存到session的user  upload",req.session.user);
-  upload.singleUpload(req,res);
+  let type = "encryptApk"
+  upload.singleUpload(req,res,type);
 }
 // 下载apk  有点问题 占时先屏蔽掉
 // exports.download = async function(req,res){
