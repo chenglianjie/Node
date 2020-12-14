@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-12-02 17:04:35
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-11 15:54:39
+ * @LastEditTime: 2020-12-14 19:02:53
  */
 /*
  * @Descripttion: 
@@ -18,12 +18,17 @@ const execSync = require("child_process").execSync;
 const path = require("path");
 var ApkReader = require('adbkit-apkreader')
 var fs = require('fs')
+const util = require("util");
 const moment = require("moment")
 const mkdirp = require('mkdirp');
+const renameAsync = util.promisify(fs.rename);
 // var ApkReader = require('adbkit-apkreader')
 // var fs = require('fs')
 module.exports = async function (aaptPath, apkPath, apkboxPath) {
-  let cmd = `${aaptPath} dump badging ${apkPath}`;
+  let cmd = `${aaptPath}  dump badging ${apkPath}`;
+  if(process.platform==="linux"){
+    cmd = `chmod +x ${aaptPath}  dump badging ${apkPath}`
+  } 
   try {
     results = execSync(cmd)
   } catch (error) {

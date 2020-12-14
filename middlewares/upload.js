@@ -4,7 +4,7 @@
  * @Author: Jimmy
  * @Date: 2020-12-01 15:02:24
  * @LastEditors: Jimmy
- * @LastEditTime: 2020-12-11 16:16:12
+ * @LastEditTime: 2020-12-14 19:02:24
  */
 const multer = require("multer");
 const path = require('path');
@@ -101,6 +101,9 @@ exports.singleUpload = function (req, res, type = '') {
       // 执行aapt命令需要的路径
       let apkPath = path.join(__dirname, `../static/apk/${day}/${filename}`);
       let aaptPath = path.join(__dirname, `../utils/win.aapt.exe`);
+      if(process.platform==="linux"){
+         aaptPath = path.join(__dirname, `../utils/linux.aapt`);
+      }
       let apkboxPath = path.join(__dirname, `../static/apk/${day}`);
       let ossFile = '';
       // 解析出apk的信息
@@ -108,7 +111,7 @@ exports.singleUpload = function (req, res, type = '') {
         var apkInfo = await getApkInfo(aaptPath, apkPath, apkboxPath) || {};
       } catch (error) {
         console.log('apk解析错误',error);
-        res.status(400).send({ msg: 'apk解析失败' })
+        res.status(400).send({ msg: 'apk解析失败',error })
         return;
       }
       // 文件上传成功和解析成功之后 将apk上传到oss 占时先屏蔽
